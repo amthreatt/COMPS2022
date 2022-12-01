@@ -240,7 +240,7 @@ public class ExpressionTree {
 
     //this will take in a string an put it into postifx notation
     //postfix notation is used to constrcut the tree
-    public static String[] infixToPostfix(String[] exp)
+   /* public static String[] infixToPostfix(String[] exp)
         {
             int num_parenthesis = 0;
             for(int i =0; i < exp.length; i++){
@@ -260,7 +260,7 @@ public class ExpressionTree {
 
             for (int i = 0; i < exp.length; ++i) {
                 String c = exp[i];
-                //System.out.println(c);
+               // System.out.println(c);
 
                 // If the scanned character is an
                 // operand, add it to output.
@@ -295,7 +295,7 @@ public class ExpressionTree {
                         index++;
                         stack.pop();
                     }
-                    System.out.println(c);
+                    System.out.println("this is while stack not empty"+c);
                     stack.push(c);
                 }
             }
@@ -314,7 +314,7 @@ public class ExpressionTree {
 
                         result[index] = stack.peek();
                         index++;
-                      //  System.out.println(stack.pop());
+                        System.out.println("this is stack.pop"+stack.pop());
                         stack.pop();
                   //  }
 
@@ -330,9 +330,100 @@ public class ExpressionTree {
             return result;
             }
 
+*/
+    public static String[] infixToPostfix(String[] exp)
+    {
+        int num_parenthesis = 0;
+        for(int i =0; i < exp.length; i++){
+            if(exp[i].contains( ")") || exp[i].contains( "(") ){
+                num_parenthesis++;
+            }
+            else{
+                num_parenthesis = 0;
+            }
+        }
+        // initializing empty String for result
+       // String[] result = new String[exp.length - num_parenthesis -1];
+        String[] result = new String[exp.length];
+        int index = 0;
+
+        // initializing empty stack
+        Deque<String> stack = new ArrayDeque<String>();
+
+        for (int i = 0; i < exp.length; ++i) {
+            String c = exp[i];
+            //System.out.println(c);
+
+            // If the scanned character is an
+            // operand, add it to output.
+            if ( !isOperator(c.charAt(0)) && !c.contains("(")&& !c.contains(")")) {
+                // result[i] = c;
+                result[index] = c;
+                index++;
+            }
+
+            // If the scanned character is an '(',
+            // push it to the stack.
+            else if (c.contains("(")){
+                stack.push(c);}
+
+            //  If the scanned character is an ')',
+            // pop and output from the stack
+            // until an '(' is encountered.
+            else if (c.contains( ")") ){
+                while (!stack.isEmpty() && !stack.peek().contains("(")) {
+                    // result += stack.peek();
+                    result[index] = stack.peek();
+                    index++;
+                    stack.pop();
+                }
+
+                stack.pop();
+            }
+            else // an operator is encountered
+            {
+                while (!stack.isEmpty() && Prec(c) <= Prec(stack.peek())) {
+                    result[index]=stack.peek();
+                    index++;
+                    stack.pop();
+                }
+              //  System.out.println(c);
+                stack.push(c);
+            }
+        }
+
+        String[] inv = new String[1];
+        // pop all the operators from the stack
 
 
-//todo as of now this method is not in use
+        while (!stack.isEmpty()) {
+            if (stack.peek().contains("("))
+                // inv[1] = "invalid string";
+                return inv;
+            //for(int l =0; l < result.length; l++){
+
+            // if(result[l] == null){
+
+            result[index] = stack.peek();
+            index++;
+            //  System.out.println(stack.pop());
+            stack.pop();
+            //  }
+
+        }
+        //stack.pop();
+        int endOfResult = 0;
+        for(int i = 0; i < result.length; i++){
+            if(result[i] != null){
+                endOfResult++;
+            }
+        }
+        result = subArray(result, 0, endOfResult-1);
+        return result;
+    }
+
+
+    //todo as of now this method is not in use
         public static Character side(String eqn, char var){
         //find which side of the equation the var is on
             if(eqn.indexOf(var) < eqn.indexOf('=')){
@@ -366,28 +457,49 @@ public class ExpressionTree {
         Character getVar = 'L';
 
         if(getVar.equals('L')){
+
             if(inorder(LTree.right).indexOf(var) == -1 && inorder(LTree).indexOf(var) != -1){
                 //inverse operation because this is the root we need to remove now
-                String dat = inverseOp(LTree.data);
+               // String dat = inverseOp(LTree.data);
+                System.out.println("Great so lets get " + var + " to be the only element on the left side of the equal sign.");
+                System.out.println("Lets start by moving: " + inorder(RTree.left));
+                System.out.println("To do that we will need to apply the inverse of: " + RTree.data);
+                System.out.println("What do you think that might be(input what you think the inverse of the operation is): ");
+                Scanner scan = new Scanner(System.in);
+                String studetnAns = scan.nextLine();
 
-                Node temp;
+                String dat = inverseOp(LTree.data);
+                Node temp = null;
                 temp = new Node(dat);
                 temp.left = RTree;
                 temp.right = LTree.right;
 
-                System.out.println("right tree");
-                printBinaryTree(RTree);
-                System.out.println("left tree");
-                printBinaryTree(LTree);
+               // System.out.println("right tree");
+                //printBinaryTree(RTree);
+               // System.out.println("left tree");
+              //  printBinaryTree(LTree);
 
                 Tree.right = temp;
                 Tree.left = LTree.left;
+
+                if(studetnAns.equals(dat)){
+                    System.out.println("\nGreat job "+ studetnAns+" was correct! Now take a moment to write down what you think our equation should look like after this first step");
+                    System.out.println("type ready when you're ready to see the answer");
+                    Scanner scann = new Scanner(System.in);
+                    String red = scann.nextLine();
+
+                    System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+                }
             }
 
         }
        return Tree;
+
     }
+
+
 //this method is to complete one step of solving the equation given the variable is one the right side of the equation
+
     public static Node OneRightMove(Node root, Character var){
         Node Tree = root;
         Node LTree = root.left;
@@ -395,27 +507,143 @@ public class ExpressionTree {
         Character getVar = 'R';
 
         if(getVar.equals('R')){
-            if(inorder(RTree.left).indexOf(var) == -1 && inorder(RTree).indexOf(var) != -1){
-                System.out.println("this is the if condition statment if there is no x in there: "+inorder(RTree.left));
+           // System.out.println("this is r.l in order" + inorder(RTree.left).indexOf(var));
+          //  System.out.println("this is r.r in order" + inorder(RTree.right).indexOf(var));
+         //   System.out.println(inorder(RTree.left).indexOf(var) == 1 && inorder(RTree.right).indexOf(var) == -1);
+            if(inorder(RTree.left).indexOf(var) != -1 && inorder(RTree.right).indexOf(var) == -1){
+              //  System.out.println("this is the if condition statment if there is no x in there: "+inorder(RTree.left));
                 //inverse operation because this is the root we need to remove now
+               // String dat = inverseOp(RTree.data);
+               System.out.println("\nSo our goal is to have the only thing on the right side of the equal sign (=) be " + var + ".");
+                System.out.println("Lets start by moving: " + inorder(RTree.right));
+                System.out.println("To do that we will need to apply the inverse of: " + RTree.data);
+                System.out.println("What do you think that might be(input what you think the inverse of the operation is): ");
+                Scanner scan = new Scanner(System.in);
+                String studetnAns = scan.nextLine();
+
+
+
                 String dat = inverseOp(RTree.data);
                 Node temp = null;
                 temp = new Node(dat);
                 temp.left = LTree;
-                temp.right = RTree.left;
+         //       System.out.println("why are we tetting here ");
+          //      printBinaryTree(temp);
+                temp.right = RTree.right;
+            //    printBinaryTree(temp);
 
-                System.out.println("right tree");
-                printBinaryTree(RTree);
-                System.out.println("left tree");
-                printBinaryTree(LTree);
+             //   System.out.println("right tree");
+              //  printBinaryTree(RTree);
+              //  System.out.println("left tree");
+               // printBinaryTree(LTree);
 
                 Tree.left = temp;
-                Tree.right = RTree.right;
+                Tree.right = RTree.left;
+                while(!studetnAns.equals(dat)){
+                    System.out.println("So close! What is the operation that can undo:" + dat);
+                    Scanner scann = new Scanner(System.in);
+                    studetnAns = scann.nextLine();
+                }
+                if(studetnAns.equals(dat)){
+                    System.out.println("Great job "+ studetnAns+" was correct! Now take a moment to write down what you think our equation should look like after this first step");
+                    System.out.println("type ready when you're ready to see the answer");
+                    Scanner scann = new Scanner(System.in);
+                    String red = scann.nextLine();
+
+                    System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+                }
+
             }
+            if(inorder(RTree.left).indexOf(var) == -1 && inorder(RTree.right).indexOf(var) != -1){
+                System.out.println("\nSo our goal is to have the only thing on the right side of the equal sign (=) be " + var + ".");
+                System.out.println("Lets start by moving: " + inorder(RTree.left));
+                System.out.println("As you may have noticed, there is no operation infront of " +inorder(RTree.left));
+                //if the operation next to it is + or -
+                if(RTree.data.equals("+") || RTree.data.equals("-")){
+                    System.out.println("So to move " + inorder(RTree.left) + "we have to image a + in front of it, what is the inverse of +");
+                    Scanner scan = new Scanner(System.in);
+                    String studetnAns = scan.nextLine();
+                    while(!studetnAns.equals("-")){
+                        System.out.println("Close, lets try again. Whats the inverse of *");
+                        scan = new Scanner(System.in);
+                        studetnAns = scan.nextLine();
+                    }
+                    if(studetnAns.equals("-")){
+                        System.out.println("Great job that's correct - is the inverse of +");
+                    }
+                    String dat = "-";
+                    Node temp = null;
+                    temp = new Node(dat);
+                    temp.left = LTree;
+                    temp.right = RTree.left;
+                    Tree.left = temp;
+                    Tree.right = RTree.left;
+                    System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+
+
+                }
+
+                if(RTree.data.equals("*") || RTree.data.equals("/")){
+                    System.out.println("So to move " + inorder(RTree.left) + "we have to image a 1* in front of it, what is the inverse of *");
+                    Scanner scan = new Scanner(System.in);
+                    String studetnAns = scan.nextLine();
+                    while(!studetnAns.equals("/")){
+                        System.out.println("Close, lets try again. Whats the inverse of *");
+                        scan = new Scanner(System.in);
+                        studetnAns = scan.nextLine();
+                    }
+                    if(studetnAns.equals("/")){
+                        System.out.println("Great job that's correct / is the inverse of *");
+                    }
+                    String dat = "/";
+                    Node temp = null;
+                    temp = new Node(dat);
+                    temp.left = LTree;
+                    temp.right = RTree.left;
+                    Tree.left = temp;
+                    Tree.right = RTree.left;
+
+                }
+                if(RTree.data.equals("-")){
+                    System.out.println("So after moving" + inorder(RTree.left) + " we are left with: -" + inorder(RTree.right)); //if there is no - when this is printed add one in
+                    System.out.println("To fix this we multiple both sides of the equation by -1, we have to do this because subtraction is not associative");
+                    String dat = "*";
+                    Node temp = null;
+                    temp = new Node(dat);
+                    temp.left = Tree.left;
+                    temp.right = new Node("-1");
+                    Tree.left = temp;
+                    Tree.right = RTree.right;
+
+                    System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+
+                }
+                if(RTree.data.equals("/")){
+                    System.out.println("So after moving" + inorder(RTree.left) + ", we are left with: 1/" + inorder(RTree.right)); //if there is no - when this is printed add one in
+                    System.out.println("To fix this we divide 1 by the entire expression, we have to do this because subtraction is not associative");
+                    String dat = "/";
+                    Node temp = null;
+                    temp = new Node(dat);
+                    temp.left = new Node("1");
+                    temp.right = Tree.left;
+                    Tree.left = temp;
+                    Tree.right = RTree.right;
+
+                    System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+
+                }
+
+
+            }
+
+
+
 
         }
         return Tree;
     }
+
+
 
 // this is to output out tree in post order notation
     //this is useful because sometimes when inorder tranverising the output neglect the position of parnthesis this omits that issue
@@ -485,13 +713,118 @@ public class ExpressionTree {
              var = var1.charAt(0);
         }
 
-        System.out.println("Okay one final look through to make sure everything is put in correctly");
-     //   for(int i = 0; i )
+        System.out.println("Okay one final look through to make sure everything is put in correctly...");
+        for(int i = 0; i< eqn.length()-1;i++){
+            while(isOperator(eqn.charAt(i)) && isOperator(eqn.charAt(i+1))){
+                System.out.println("Oops, looks like there might be a typo go ahead and try and input your equation again: ");
+                Scanner scan4 = new Scanner(System.in);
+                eqn = scan4.nextLine();
+            }
+            if(i > 0) {
+                while(eqn.charAt(i) == '^'){
+                    System.out.println("Sorry, we cant quite solve that one yet, try another problem: ");
+                    Scanner scan4 = new Scanner(System.in);
+                    eqn = scan4.nextLine();
+                }
+                while(((eqn.charAt(i) == '(' /*|| eqn.charAt(i) == var*/)  && !isOperator(eqn.charAt(i - 1)))  || (eqn.charAt(i) == ')'  && !isOperator(eqn.charAt(i + 1)))){
+                    System.out.println("Oops, looks like there might be a typo (hint remember 5(x) here should be rewritten as 5*(x)):  ");
+                    Scanner scan4 = new Scanner(System.in);
+                    eqn = scan4.nextLine();
+                }
+            }
+        }
 
-        //no two ops right next to eachother
-        //always an op before an after parenth
-        //confirm variable is alone, if not sugges adding in a multiplication before hand
-        //check for exponents (we cant quite do that yet)
+        System.out.println("Amazing, it looks like we have our problem to solve");
+        System.out.println("Type \"yes\" if this is the problem you would like to  have solved, and \"no\" if you would like to start over: ");
+        Scanner scan5 = new Scanner(System.in);
+        String ans = scan5.nextLine();
+
+        if(ans.equals("yes")){
+            System.out.println("Great lets get started!");
+        }
+        else{
+            System.out.println("No worries lets try again!");
+            //todo please fix this and make it actually start over poopy
+        }
+
+
+        //at this point eqn is the input from the user that should work with the code and var is the character variable we are solving for
+        // first find which side of the equals sign the variable is on, this will clue us into which of the move methods to use
+        int eqIndex = 0;
+        int varIndex = 0;
+        String side = null;
+        String subp1 = "";
+        String subp2 = "" ;
+        for(int k =0; k < eqn.length(); k ++){
+            if(eqn.charAt(k) == '='){
+                eqIndex = k;
+                 subp1 = eqn.substring(0,k);
+                 subp2 = eqn.substring(k+1,eqn.length());
+            }
+
+            if(eqn.charAt(k) == var){
+                varIndex = k;
+            }
+
+            if(eqIndex< varIndex){
+                side = "R";
+            }
+            if(eqIndex > varIndex){
+                side = "L";
+            }
+
+        }
+        if(side.equals("L")){
+            eqn = subp2 + "=" + subp1;
+            side = "R";
+        }
+        //only using right hand equations
+        //preform the move methods in a while loop until the the first left or right node of the root is the variable we are solving for
+        String[] eqnList = infixToPostfix(toList(eqn.replaceAll(" ", "")));
+       //print(eqnList);
+        //left
+        //System.out.println(side);
+
+      //  Node x = expressionTree(eqnList);
+        Node root = expressionTree(eqnList);
+        if(side.equals("L")){
+            //solve for the variable using oneLeftMove
+            //chance eqn into list of strings for expression tree
+            //make expression tree
+           // String[] eqnList = infixToPostfix(toList(eqn));
+           // Node root = expressionTree(eqnList);
+            String str = eqn;
+           // System.out.println(str + "did we get here");
+
+
+            while(str.charAt(2) != '=' ){
+                // System.out.println("is this priting here");
+                Node x = OneLeftMove(root, 'x');
+                str = inorder(x);
+                //  i--;
+            }
+        }
+        if(side.equals("R")){
+            //solve for the variable using oneLeftMove
+            //chance eqn into list of strings for expression tree
+            //make expression tree
+          //  String[] eqnList = toList(eqn);
+          //  Node root = expressionTree(eqnList);
+
+            String str = eqn;
+            Node x = OneRightMove(root, 'x');
+            while(!x.right.data.equals(Character.toString(var)) ){
+               // System.out.println("is this priting here");
+                 x = OneRightMove(root, 'x');
+               // str = inorder(x);
+               // System.out.println(str);
+                //  i--;
+            }
+
+        }
+
+        //before each tree movement ask the user to input what operation we are going to preform
+        //give the user some time to try and write their own answer and offer a breif explination as to why we are doing what we are doing
     }
 
     public static void print(String[] str){
@@ -501,21 +834,37 @@ public class ExpressionTree {
     }
 
     public static void Tester(){
-      //  String eqn = infixToPostfix("c*b-e=c*(d+x^2)");
+//  String eqn = infixToPostfix("c*b-e=c*(d+x^2)");
         //String[] eqn = infixToPostfix(toList("c*b-e=c*(d+x)"));
-        String[] eqn = infixToPostfix(toList("abc*def-(gh+kl)=mn/op - x"));
-        print(eqn);
+        String[] blah = toList("c*b-e=c*(d+x)");
+        //  print(blah);
+        //String[] eqn = infixToPostfix(toList("a+b = x/p+d-e*g ")); //this equation works for one right move
+        //  print(eqn);
+        String[] eqn = infixToPostfix(toList("a+b = p-x+d-e*g "));
         Character var = 'x';
         Node root = expressionTree(eqn);
         System.out.println("\nbefore");
         printBinaryTree(root);
-       // printBinaryTree(root.left);
+        // printBinaryTree(root.left);
         Node x = OneRightMove(root, 'x');
-        System.out.println("after 1");
-        printBinaryTree(x);
-        x = OneRightMove(root, 'x');
-        System.out.println("after 2");
-        printBinaryTree(x);
+        int p = 4;
+
+        while(!x.right.data.equals("x")) {
+       //     System.out.println("doe is "+!inorder(root.right).equals("x"));
+         //   System.out.println(inorder(root.right));
+             x = OneRightMove(root, 'x');
+         //     System.out.println("after" + p);
+          //  System.out.println(inorder(x));
+           // printBinaryTree(x);
+           // x = OneRightMove(root, 'x');
+          //  System.out.println("after 2");
+           // printBinaryTree(x);
+          //  p--;
+
+
+        }
+     //   System.out.println(inorder(x.right).equals(var));
+
     }
 
 
@@ -537,5 +886,5 @@ public class ExpressionTree {
 
     }
 }
-
+//Use this problem c*b-e=c*(d+x)
 
