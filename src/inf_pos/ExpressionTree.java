@@ -9,6 +9,22 @@ import java.util.*;
 
 import static jdk.nashorn.internal.objects.NativeString.length;
 
+class Node {
+    // char data;
+    String data;
+    Node left, right;
+
+   /* public Node(char data){
+        this.data = data;
+        left = right = null;
+    }*/
+
+    public Node(String data){
+        this.data = data;
+        left = right = null;
+    }
+}
+
 
 public class ExpressionTree {
 
@@ -559,17 +575,14 @@ public class ExpressionTree {
                 System.out.println("Lets start by moving: " + inorder(RTree.left));
                 System.out.println("As you may have noticed, there is no operation infront of " +inorder(RTree.left));
                 //if the operation next to it is + or -
-                if(RTree.data.equals("+") || RTree.data.equals("-")){
-                    System.out.println("So to move " + inorder(RTree.left) + "we have to image a + in front of it, what is the inverse of +");
+                if(RTree.data.equals("+") || RTree.data.equals("-") ){
+                    System.out.println("So to move " + inorder(RTree.left) + " we have to image a 0+ in front of it, what is the inverse of +");
                     Scanner scan = new Scanner(System.in);
                     String studetnAns = scan.nextLine();
                     while(!studetnAns.equals("-")){
-                        System.out.println("Close, lets try again. Whats the inverse of *");
+                        System.out.println("Close, lets try again. Whats the inverse of -");
                         scan = new Scanner(System.in);
                         studetnAns = scan.nextLine();
-                    }
-                    if(studetnAns.equals("-")){
-                        System.out.println("Great job that's correct - is the inverse of +");
                     }
                     String dat = "-";
                     Node temp = null;
@@ -577,9 +590,25 @@ public class ExpressionTree {
                     temp.left = LTree;
                     temp.right = RTree.left;
                     Tree.left = temp;
-                    Tree.right = RTree.left;
-                    System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+                    Tree.right = RTree.right;
+                    if(studetnAns.equals("-")){
+                        System.out.println("Great job that's correct - is the inverse of +. Now take a moment to write down what you think our equation should look like after this first step");
+                        System.out.println("type ready when you're ready to see the answer");
+                        Scanner scann = new Scanner(System.in);
+                        String red = scann.nextLine();
 
+                        System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+                    }
+
+                  /*  Node temp = null;
+                    temp = new Node(dat);
+                    temp.left = LTree;
+                    temp.right = RTree.left;
+                    Tree.left = temp;
+                    Tree.right = RTree.left;*/
+
+
+                   // System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
 
                 }
 
@@ -592,35 +621,50 @@ public class ExpressionTree {
                         scan = new Scanner(System.in);
                         studetnAns = scan.nextLine();
                     }
-                    if(studetnAns.equals("/")){
-                        System.out.println("Great job that's correct / is the inverse of *");
-                    }
                     String dat = "/";
                     Node temp = null;
                     temp = new Node(dat);
                     temp.left = LTree;
                     temp.right = RTree.left;
                     Tree.left = temp;
-                    Tree.right = RTree.left;
+                    Tree.right = RTree.right;
+                    if(studetnAns.equals("/")){
+                        System.out.println("Great job that's correct / is the inverse of *. Now take a moment to write down what you think our equation should look like after this first step");
+                        System.out.println("type ready when you're ready to see the answer");
+                        Scanner scann = new Scanner(System.in);
+                        String red = scann.nextLine();
+
+                        System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
+                    }
+
 
                 }
                 if(RTree.data.equals("-")){
                     System.out.println("So after moving" + inorder(RTree.left) + " we are left with: -" + inorder(RTree.right)); //if there is no - when this is printed add one in
                     System.out.println("To fix this we multiple both sides of the equation by -1, we have to do this because subtraction is not associative");
-                    String dat = "*";
+                    /*String dat = "-";
                     Node temp = null;
                     temp = new Node(dat);
-                    temp.left = Tree.left;
-                    temp.right = new Node("-1");
+                    temp.left = LTree;
+                    temp.right = RTree.left;
                     Tree.left = temp;
-                    Tree.right = RTree.right;
+                    Tree.right = RTree.right;*/
+                     String dat = "*";
+                     Node temp = null;
+                    temp = new Node(dat);
+                    temp.right = Tree.left;
+                    temp.left = new Node("-1");
+                    Tree.left = temp;
+                    Tree.right = RTree.left;
 
                     System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
-
+                    return Tree;
                 }
                 if(RTree.data.equals("/")){
-                    System.out.println("So after moving" + inorder(RTree.left) + ", we are left with: 1/" + inorder(RTree.right)); //if there is no - when this is printed add one in
-                    System.out.println("To fix this we divide 1 by the entire expression, we have to do this because subtraction is not associative");
+                    System.out.println("So after moving " + inorder(RTree.left) + ", we are left with: 1/" + inorder(RTree.right)); //if there is no - when this is printed add one in
+                    System.out.println("To fix this we divide 1 by the entire expression, we have to do this because division is not associative");
+
+
                     String dat = "/";
                     Node temp = null;
                     temp = new Node(dat);
@@ -630,14 +674,14 @@ public class ExpressionTree {
                     Tree.right = RTree.right;
 
                     System.out.println("Amazing so now we are one step closer to having this problem solved: " + inorder(root));
-
+                    return Tree;
                 }
 
 
             }
 
 
-
+        return Tree;
 
         }
         return Tree;
@@ -665,7 +709,56 @@ public class ExpressionTree {
     public static String Postorder(Node root){
         return Postorder(root, "");
     }
+    public static String getInput(String eqn){
+        eqn = eqn.replaceAll("\\s","");
+        while(!eqn.contains("=")){
+            System.out.println("Hmmmm I think we are missing the = sign, lets try again");
+            Scanner scan4 = new Scanner(System.in);
+            System.out.println("Enter the equation you'd like to solve: ");
+            eqn = scan4.nextLine();  // Read user input
+            eqn = eqn.replaceAll("\\s","");
+        }
 
+
+        Scanner scan2 = new Scanner(System.in);
+        System.out.println("Enter the variable you'd like to solve for: ");
+        String var1 = scan2.nextLine();  // Read user input
+        Character  var = var1.charAt(0);
+        while(var1.length() != 1 || !eqn.contains(var1)){
+            if(var1.length() != 1) {
+                System.out.println("\tMake sure you're inputting just one variable\n");
+            }
+            if(!eqn.contains(var1)){
+                System.out.println("\tMake sure the variable is in the equation you inputted\n");
+            }
+            Scanner scan3 = new Scanner(System.in);
+            System.out.println("Enter the variable you'd like to solve for: ");
+            var1 = scan3.nextLine();  // Read user input
+            var = var1.charAt(0);
+        }
+
+        System.out.println("Okay one final look through to make sure everything is put in correctly...");
+        for(int i = 0; i< eqn.length()-1;i++){
+            while(isOperator(eqn.charAt(i)) && isOperator(eqn.charAt(i+1))){
+                System.out.println("Oops, looks like there might be a typo go ahead and try and input your equation again: ");
+                Scanner scan4 = new Scanner(System.in);
+                eqn = scan4.nextLine();
+            }
+            if(i > 0) {
+                while(eqn.charAt(i) == '^'){
+                    System.out.println("Sorry, we cant quite solve that one yet, try another problem: ");
+                    Scanner scan4 = new Scanner(System.in);
+                    eqn = scan4.nextLine();
+                }
+                while(((eqn.charAt(i) == '(' /*|| eqn.charAt(i) == var*/)  && !isOperator(eqn.charAt(i - 1)))  || (eqn.charAt(i) == ')'  && !isOperator(eqn.charAt(i + 1)))){
+                    System.out.println("Oops, looks like there might be a typo (hint remember 5(x) here should be rewritten as 5*(x)):  ");
+                    Scanner scan4 = new Scanner(System.in);
+                    eqn = scan4.nextLine();
+                }
+            }
+        }
+        return  eqn + "|" + var;
+    }
     public static void Solver(){
 //conditions for input
         System.out.println("Welcome to the Automated Math Tutor :)");
@@ -673,7 +766,7 @@ public class ExpressionTree {
                 " for a singular variable in an equation \n\tOffer user engagement for further practice \n\tHave fun learning Math!\n\n");
 
         System.out.println("Okay lets get started, here are some general guidelines for using this program: ");
-        System.out.println("\tHere's whats going to happen, you will enter any *linear algebra equation with coefficients between 0-9 with any of the following operations: ");// for now until i fix exponent option
+        System.out.println("\tHere's whats going to happen, you will enter any *linear algebra equation with coefficients greater than 0 with any of the following operations: ");// for now until i fix exponent option
         System.out.println("\t\t * : multiplication");
         System.out.println("\t\t / : division");
         System.out.println("\t\t + : addition");
@@ -685,6 +778,11 @@ public class ExpressionTree {
 
         Scanner scan1 = new Scanner(System.in);
         System.out.println("Enter the equation you'd like to solve: ");
+        String eqn = scan1.nextLine();  // Read user input
+        String eq = getInput(eqn);
+        eqn = eq.substring(0,eq.indexOf('|'));
+        Character var = eq.charAt(eq.length()-1);
+     /*   System.out.println("Enter the equation you'd like to solve: ");
         String eqn = scan1.nextLine();  // Read user input
         eqn = eqn.replaceAll("\\s","");
         while(!eqn.contains("=")){
@@ -725,14 +823,14 @@ public class ExpressionTree {
                     System.out.println("Sorry, we cant quite solve that one yet, try another problem: ");
                     Scanner scan4 = new Scanner(System.in);
                     eqn = scan4.nextLine();
-                }
-                while(((eqn.charAt(i) == '(' /*|| eqn.charAt(i) == var*/)  && !isOperator(eqn.charAt(i - 1)))  || (eqn.charAt(i) == ')'  && !isOperator(eqn.charAt(i + 1)))){
-                    System.out.println("Oops, looks like there might be a typo (hint remember 5(x) here should be rewritten as 5*(x)):  ");
+                }*/
+            //    while(((eqn.charAt(i) == '(' /*|| eqn.charAt(i) == var*/)  && !isOperator(eqn.charAt(i - 1)))  || (eqn.charAt(i) == ')'  && !isOperator(eqn.charAt(i + 1)))){
+             /*       System.out.println("Oops, looks like there might be a typo (hint remember 5(x) here should be rewritten as 5*(x)):  ");
                     Scanner scan4 = new Scanner(System.in);
                     eqn = scan4.nextLine();
                 }
             }
-        }
+        } */
 
         System.out.println("Amazing, it looks like we have our problem to solve");
         System.out.println("Type \"yes\" if this is the problem you would like to  have solved, and \"no\" if you would like to start over: ");
@@ -744,7 +842,12 @@ public class ExpressionTree {
         }
         else{
             System.out.println("No worries lets try again!");
-            //todo please fix this and make it actually start over poopy
+             scan1 = new Scanner(System.in);
+            System.out.println("Enter the equation you'd like to solve: ");
+             eqn = scan1.nextLine();  // Read user input
+             eq = getInput(eqn);
+            eqn = eq.substring(0,eq.indexOf('|'));
+            var = eq.charAt(eq.length()-1);
         }
 
 
@@ -799,7 +902,7 @@ public class ExpressionTree {
 
             while(str.charAt(2) != '=' ){
                 // System.out.println("is this priting here");
-                Node x = OneLeftMove(root, 'x');
+                Node x = OneLeftMove(root, var);
                 str = inorder(x);
                 //  i--;
             }
@@ -812,12 +915,12 @@ public class ExpressionTree {
           //  Node root = expressionTree(eqnList);
 
             String str = eqn;
-            Node x = OneRightMove(root, 'x');
+            Node x = OneRightMove(root, var);
+
             while(!x.right.data.equals(Character.toString(var)) ){
                // System.out.println("is this priting here");
-                 x = OneRightMove(root, 'x');
-               // str = inorder(x);
-               // System.out.println(str);
+                 x = OneRightMove(root, var);
+              //  str = inorder(x);
                 //  i--;
             }
 
@@ -840,26 +943,31 @@ public class ExpressionTree {
         //  print(blah);
         //String[] eqn = infixToPostfix(toList("a+b = x/p+d-e*g ")); //this equation works for one right move
         //  print(eqn);
-        String[] eqn = infixToPostfix(toList("a+b = p-x+d-e*g "));
+        //a + b = c/d *x
+        // a*b -c = d*(e+x)
+        // a+b - c = d/x-e
+        // e + f = a - x + b - c *d
+        // e + f = a -x+(b-c) * d
+        String[] eqn = infixToPostfix(toList("e + f = a - x + b - c *d"));
         Character var = 'x';
         Node root = expressionTree(eqn);
         System.out.println("\nbefore");
         printBinaryTree(root);
         // printBinaryTree(root.left);
-        Node x = OneRightMove(root, 'x');
+        Node x = OneRightMove(root, var);
         int p = 4;
 
-        while(!x.right.data.equals("x")) {
+        while(p>=0) {
        //     System.out.println("doe is "+!inorder(root.right).equals("x"));
          //   System.out.println(inorder(root.right));
-             x = OneRightMove(root, 'x');
+             x = OneRightMove(root, var);
          //     System.out.println("after" + p);
           //  System.out.println(inorder(x));
-           // printBinaryTree(x);
+            printBinaryTree(x);
            // x = OneRightMove(root, 'x');
           //  System.out.println("after 2");
            // printBinaryTree(x);
-          //  p--;
+            p--;
 
 
         }
@@ -868,10 +976,10 @@ public class ExpressionTree {
     }
 
 
+    public static void main(String[] args) {
 
-        public static void main(String[] args) {
-           Solver();
-           // Tester();
+        Solver();
+        //Tester();
             /*String[] eqn =toList("abc*def-(gh+kl)=mn/op");////toList("c*b-e=c*(d+x)");//
             print(eqn);
             System.out.println("\n");
@@ -885,6 +993,10 @@ public class ExpressionTree {
             }*/
 
     }
+
 }
+
+
+
 //Use this problem c*b-e=c*(d+x)
 
