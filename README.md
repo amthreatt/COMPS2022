@@ -36,4 +36,4 @@ At each the step the program will ask the user when they are ready to recieve th
 
 ## User Testing and Feedback 
 
-In a file called user testing I have added the problem set I gave all of my testers, and the data collected from their feedback form. 
+In a file called UserTestingProblemSet I have added the problem set I gave all of my testers, and the data collected from their feedback form is in a file called FeedbackFormResults. 
